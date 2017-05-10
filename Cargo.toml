@@ -8,12 +8,12 @@ readme = "README.md"
 license = "MIT"
 
 [dependencies]
-syntex_syntax = "0.50"
+syntex_syntax = "0.58"
 rustc-serialize = "0.3"
 clap = "2"
-walkdir = "0.1.5"
+walkdir = "1"
 syncbox = "0.2.4"
-num_cpus = "0.2.13"
+num_cpus = "1"
 
 [dev-dependencies]
-tempfile = "2.1.4"
+tempfile = "2"
