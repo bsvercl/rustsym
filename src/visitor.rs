@@ -36,7 +36,7 @@ fn get_ident_name(ident: &ast::Ident) -> String {
     ident.name.as_str().to_string()
 }
 
-impl<'a> Visitor for SymbolVisitor<'a> {
+impl<'a, 'ast> Visitor<'ast> for SymbolVisitor<'a> {
     // Catch free standing functions
     fn visit_fn(&mut self, fn_kind: FnKind, fn_decl: &ast::FnDecl, span: Span, _: ast::NodeId) {
         let fn_name = match fn_kind {
