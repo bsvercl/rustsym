@@ -41,21 +41,21 @@ enum MatchKind {
 impl Encodable for MatchKind {
     fn encode<E: Encoder>(&self, e: &mut E) -> Result<(), E::Error> {
         try!(e.emit_str(match *self {
-            MatchKind::Module => "module",
+                            MatchKind::Module => "module",
 
-            MatchKind::Struct => "struct",
-            MatchKind::Method => "method",
-            MatchKind::Field => "field",
+                            MatchKind::Struct => "struct",
+                            MatchKind::Method => "method",
+                            MatchKind::Field => "field",
 
-            MatchKind::Function => "function",
+                            MatchKind::Function => "function",
 
-            MatchKind::Constant => "constant",
-            MatchKind::Static => "static",
-            MatchKind::Enum => "enum",
+                            MatchKind::Constant => "constant",
+                            MatchKind::Static => "static",
+                            MatchKind::Enum => "enum",
 
-            MatchKind::Macro => "macro",
-            MatchKind::Trait => "trait",
-        }));
+                            MatchKind::Macro => "macro",
+                            MatchKind::Trait => "trait",
+                        }));
 
         Ok(())
     }
@@ -173,10 +173,12 @@ fn search_symbol_global(path: &str, query: &str) -> Vec<Match> {
 
     // Fold the list of matches into a single list
     let completed_jobs = completed_jobs.load(Ordering::Relaxed);
-    rx.iter().take(completed_jobs).fold(vec![], |mut v, m| {
-        v.extend(m);
-        v
-    })
+    rx.iter()
+        .take(completed_jobs)
+        .fold(vec![], |mut v, m| {
+            v.extend(m);
+            v
+        })
 }
 
 fn search_symbol_file(file: &str, query: &str, search_children: bool) -> Vec<Match> {
@@ -429,7 +431,7 @@ mod tests {
             }
 
             impl TestStruct {
-                fn test_fn() {}   
+                fn test_fn() {}
             }
         ";
 

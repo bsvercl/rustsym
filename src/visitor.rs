@@ -21,13 +21,14 @@ impl<'a> SymbolVisitor<'a> {
         let filename = self.codemap.span_to_filename(span);
         let line = self.codemap.lookup_char_pos(span.lo).line;
 
-        self.matches.push(Match {
-            path: filename,
-            name: name.into(),
-            container: container.unwrap_or_default().into(),
-            kind: kind,
-            line: line,
-        });
+        self.matches
+            .push(Match {
+                      path: filename,
+                      name: name.into(),
+                      container: container.unwrap_or_default().into(),
+                      kind: kind,
+                      line: line,
+                  });
     }
 }
 
@@ -37,11 +38,7 @@ fn get_ident_name(ident: &ast::Ident) -> String {
 
 impl<'a> Visitor for SymbolVisitor<'a> {
     // Catch free standing functions
-    fn visit_fn(&mut self,
-                fn_kind: FnKind,
-                fn_decl: &ast::FnDecl,
-                span: Span,
-                _: ast::NodeId) {
+    fn visit_fn(&mut self, fn_kind: FnKind, fn_decl: &ast::FnDecl, span: Span, _: ast::NodeId) {
         let fn_name = match fn_kind {
             FnKind::ItemFn(id, _, _, _, _, _, _) => Some(get_ident_name(&id)),
             _ => None,
@@ -67,7 +64,8 @@ impl<'a> Visitor for SymbolVisitor<'a> {
             ItemKind::Mod(ref mod_) => {
 
                 if !self.search_children {
-                    if self.codemap.span_to_filename(item.span) != self.codemap.span_to_filename(mod_.inner) {
+                    if self.codemap.span_to_filename(item.span) !=
+                       self.codemap.span_to_filename(mod_.inner) {
                         // Don't visit submodules that are not inline.
                         return;
                     }
