@@ -1,5 +1,8 @@
 extern crate syntex_syntax as syntax;
-extern crate rustc_serialize;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
+extern crate serde_json;
 extern crate clap;
 extern crate walkdir;
 extern crate syncbox;
@@ -10,8 +13,6 @@ extern crate tempfile;
 
 mod visitor;
 
-use rustc_serialize::{json, Encodable, Encoder};
-
 use clap::{App, Arg, SubCommand, AppSettings};
 
 use syntax::parse::{self, ParseSess};
@@ -19,7 +20,9 @@ use syntax::visit;
 
 use std::path::Path;
 
-#[derive(Debug, PartialEq)]
+// TODO: serialize these in lowercase!
+// `MatchKind::Module` becomes "module"
+#[derive(Debug, Serialize, PartialEq)]
 enum MatchKind {
     Module,
 
@@ -37,31 +40,7 @@ enum MatchKind {
     Trait,
 }
 
-// Required to convert the `MatchKind` enum fields to lowercase in the JSON output
-impl Encodable for MatchKind {
-    fn encode<E: Encoder>(&self, e: &mut E) -> Result<(), E::Error> {
-        try!(e.emit_str(match *self {
-                            MatchKind::Module => "module",
-
-                            MatchKind::Struct => "struct",
-                            MatchKind::Method => "method",
-                            MatchKind::Field => "field",
-
-                            MatchKind::Function => "function",
-
-                            MatchKind::Constant => "constant",
-                            MatchKind::Static => "static",
-                            MatchKind::Enum => "enum",
-
-                            MatchKind::Macro => "macro",
-                            MatchKind::Trait => "trait",
-                        }));
-
-        Ok(())
-    }
-}
-
-#[derive(Debug, RustcEncodable)]
+#[derive(Debug, Serialize)]
 pub struct Match {
     path: String,
     name: String,
@@ -102,13 +81,10 @@ fn search_symbol_global(path: &str, query: &str) -> Vec<Match> {
 
     // Check for the presence of Cargo.toml. When searching globally, the user should search from
     // the crate root as we make some assumptions about the environment.
-    match std::fs::metadata(crate_root.join("Cargo.toml")) {
-        Ok(_) => {}
-        Err(_) => {
-            panic!("Failed to open Cargo.toml. When searching globally, you must begin at the \
-                    crate root")
-        }
-    };
+    if std::fs::metadata(crate_root.join("Cargo.toml")).is_err() {
+        panic!("Failed to open Cargo.toml. When searching globally, you must begin at the \
+                    crate root");
+    }
 
     let target_dir = crate_root.join("target");
 
@@ -139,8 +115,8 @@ fn search_symbol_global(path: &str, query: &str) -> Vec<Match> {
         }
 
         if let Some(path) = path.to_str() {
-            let path = path.to_owned();
-            let query = query.to_owned();
+            let path = String::from(path);
+            let query = String::from(query);
 
             let started_jobs_clone = started_jobs.clone();
             let completed_jobs_clone = completed_jobs.clone();
@@ -255,7 +231,7 @@ fn main() {
             "search" => {
                 let matches = search_symbol(m);
 
-                let encoded = json::encode(&matches).unwrap();
+                let encoded = serde_json::to_string(&matches).unwrap();
                 println!("{}", encoded);
             }
             _ => unreachable!(),

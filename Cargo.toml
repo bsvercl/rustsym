@@ -9,7 +9,9 @@ license = "MIT"
 
 [dependencies]
 syntex_syntax = "0.58"
-rustc-serialize = "0.3"
+serde = "1"
+serde_derive = "1"
+serde_json = "1"
 clap = "2"
 walkdir = "1"
 syncbox = "0.2.4"
