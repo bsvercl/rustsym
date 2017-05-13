@@ -20,9 +20,8 @@ use syntax::visit;
 
 use std::path::Path;
 
-// TODO: serialize these in lowercase!
-// `MatchKind::Module` becomes "module"
 #[derive(Debug, Serialize, PartialEq)]
+#[serde(rename_all = "lowercase")]
 enum MatchKind {
     Module,
 
