@@ -8,7 +8,6 @@ readme = "README.md"
 license = "MIT"
 
 [dependencies]
-syntex_syntax = "0.58"
 serde = "1"
 serde_derive = "1"
 serde_json = "1"

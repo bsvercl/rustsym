@@ -131,7 +131,7 @@ impl<'a, 'ast> Visitor<'ast> for SymbolVisitor<'a> {
                 self.create_match(&item_name, None, MatchKind::Static, item.span);
             }
 
-            ItemKind::Impl(_, _, _, _, ref ty, ref items) => {
+            ItemKind::Impl(_, _, _, _, _, ref ty, ref items) => {
                 let mut struct_name = String::new();
 
                 // Figure out the struct name on the right hand side of the `impl` expression
